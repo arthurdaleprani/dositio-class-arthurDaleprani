@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 import createError from '@fastify/error';
 import autoload from '@fastify/autoload';
+import mongodb from '@fastify/mongodb';
 import jwt from '@fastify/jwt';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -16,6 +17,11 @@ export async function build(opts){
     await app.register(jwt, {
         secret: opts.jwt_secret
     });
+
+    await app.register(mongodb, {
+        forceClose: true,
+        url: 'mongodb://localhost:27017/dositio'
+    })
 
     await app.register(autoload, {
         dir: join(__dirname, 'hooks'),
