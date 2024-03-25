@@ -1,17 +1,17 @@
-import auth from "./auth"
+//import auth from "./auth"
 /** @type{import('fastify').FastifyPluginAsync<>} */
 export default async function newUser(app, options){
     const categories = app.mongo.db.collection('newUser')
 app.post('/register', {
     schema:{
         body:{
-            type:{
+            type:'object',
                 properties:{
                     username: {type: 'string'},
                     password: {type: 'string'}
-                }
+                
             },
-            require:['username', 'products']
+            required:['username', 'products']
         }
     }, config:{
         requireAuthentication:true

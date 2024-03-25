@@ -1,16 +1,13 @@
-import products from "./products";
+//import products from "./products";
 /** @type{import('fastify').FastifyPluginAsync<>} */
 export default async function categories(app, options){
     const categories = app.mongo.db.collection('categories')
 
     app.get('/categories',{
-
-        config:{
-                logMe:true
-        }
     },
     async(request, reply) => {
-        return await products.find().toArray();
+        request.log.info(categories)
+        return await categories.find().toArray();
     }
 
     )
@@ -19,12 +16,12 @@ export default async function categories(app, options){
     app.post('/categories',{
         schema: {
             body:{
-                type:{
+                type: 'object',
                     properties:{
                       id: {type:'integer'},
                       name: {type:'string'},
-                      productsName: {type:'string'},      
-                    }
+                      productsName: {type:'string'}
+                    
                 },
                 required: ['name', 'products']
             }
