@@ -1,17 +1,21 @@
 /** @type{import('fastify').FastifyPluginAsync<>} */
+import categories from './categories';
 import createError from '@fastify/error';
 export default async function products(app, options) {
     const InvalidProductError = createError('InvalidProductError', 'Produto Inválido.', 400);
 
-   const products =  app.mongo.db.collection('products');
+    const products = app.mongo.db.collection('products');
 
     app.get('/products', 
-    {config: {logMe: true, 
-        requireAuthentication:true
-    
-    }}, async (request, reply) => {
-        return await products.find();
-    });
+        {
+            config: {
+                logMe: true
+            }
+        }, 
+        async (request, reply) => {
+            return await products.find().toArray();
+        }
+    );
 
     app.post('/products', {
         schema: {
@@ -24,20 +28,52 @@ export default async function products(app, options) {
                 },
                 required: ['name', 'qtd']
             }
+        },
+        config: {
+            requireAuthentication: true
         }
     }, async (request, reply) => {
         let product = request.body;
-        request.log.info(`Including product ${product.name}.`);
-        return product;
+        
+        await products.insertOne(product);
+
+        return reply.code(201).send();
     });
 
     app.get('/products/:id', async (request, reply) => {
-        app.log.info('Produto requisitado> ' + request.params.id);
-        return {};
+        let id =  request.params.id;
+        let product = await products.findOne({_id: new app.mongo.ObjectId(id)});
+        
+        return product;
     });
     
-    app.delete('/products/:id', async (request, reply) => {
-        app.log.info('Produto para remover> ' + request.params.id);
-        return {};
+    app.delete('/products/:id', {
+        config: {
+            requireAuthentication: true
+        }
+    }, async (request, reply) => {
+        let id =  request.params.id;
+        
+        await products.deleteOne({_id: new app.mongo.ObjectId(id)});
+        
+        return reply.code(204).send();;
+    });
+
+    app.put('/products/:id', {
+        config: {
+            requireAuthentication: true
+        }
+    }, async (request, reply) => {
+        let id =  request.params.id;
+        let product = request.body;
+        
+        await products.updateOne({_id: new app.mongo.ObjectId(id)}, {
+            $set: {
+                name: product.name,
+                qtd: product.qtd
+            }
+        });
+        
+        return reply.code(204).send();;
     });
 }
