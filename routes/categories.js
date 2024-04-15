@@ -36,6 +36,22 @@ export default async function categories(app, options){
 
 })
 
+app.put('/categories/:id', {
+    config: {
+        requireAuthentication: true
+    }
+}, async (request, reply) => {
+    let id =  request.params.id;
+    let categories = request.body;
+    
+    await products.updateOne({_id: new app.mongo.ObjectId(id)}, {
+        $set: {
+            name: categories.name,
+            id: categories.id,
+            products: categories.productsName
+        }
+    })});
+    
 
 app.delete('/categories/:id', {
     config: {
