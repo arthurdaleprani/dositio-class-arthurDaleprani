@@ -1,10 +1,12 @@
+
+
 /** @type{import('fastify').FastifyPluginAsync<>} */
-//import categories from './categories';
 import createError from '@fastify/error';
 export default async function products(app, options) {
     const InvalidProductError = createError('InvalidProductError', 'Produto Inválido.', 400);
 
     const products = app.mongo.db.collection('products');
+    const categories = app.mongo.db.collection('categories');
 
     app.get('/products', 
         {
@@ -24,9 +26,10 @@ export default async function products(app, options) {
                 properties: {
                     id: { type: 'integer' },
                     name: { type: 'string' },
-                    qtd: { type: 'integer' }
+                    qtd: { type: 'integer' },
+                    category: {type: 'string'}
                 },
-                required: ['name', 'qtd']
+                required: ['name', 'qtd', 'category']
             }
         },
         config: {
