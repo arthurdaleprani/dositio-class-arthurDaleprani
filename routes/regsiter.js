@@ -26,3 +26,40 @@ app.post('/register', {
 
 )
 }
+
+
+
+/*
+export default async function newUser(app, options) {
+    const usersCollection = app.mongo.db.collection('users');
+
+    app.post('/register', {
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    username: { type: 'string' },
+                    password: { type: 'string' }
+                },
+                required: ['username', 'password'] 
+            }
+        },
+        config: {
+            requireAuthentication: false 
+        }
+    }, async (request, reply) => {
+        try {
+            let newUser = request.body;
+            
+           
+            let result = await usersCollection.insertOne(newUser);
+
+            
+            return result.ops[0];
+        } catch (error) {
+            console.error(error);
+            reply.status(500).send({ error: 'Internal Server Error' });
+        }
+    });
+}
+*/

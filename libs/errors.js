@@ -23,3 +23,9 @@ export const ALREADY_EXISTS = createError(
     'This resource already exists in database.',
     412
 );
+
+export const EMPTY_LIST = createError(
+    'EMPTY_LIST',
+    'This list is empty',
+    204
+);

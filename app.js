@@ -27,14 +27,17 @@ const MyCustomError = createError('MyCustomError', 'Something stranged happened.
 export async function build(opts){
     const app = fastify(opts);
 
+   
+
+
     await app.register(jwt, {
-        secret: opts.jwt_secret
+        secret: process.env.JWT_SECRET
     });
 
     await app.register(mongodb, {
         url: opts.db_url
     });
-
+    
     await app.register(autoload, {
         dir: path.join(__dirname, 'hooks'),
         encapsulate: false,
