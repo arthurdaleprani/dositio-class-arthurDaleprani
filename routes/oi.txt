@@ -1,0 +1,28 @@
+try {
+        let id = request.params.id;
+
+        let schema = {
+            params: {
+                type: 'object',
+                properties: {
+                    id: { type: 'integer' }
+                },
+                required: ['id']
+            }
+        };
+
+        
+
+        let category = await categories.findOne({ _id: id });
+        if (!category) {
+            throw new Error('Categoria não encontrada');
+        }
+        let categoryName = category.name;
+
+        return productsCategory
+        
+    } catch (error) {
+        console.error(error);
+        reply.status(400).send({ error: error.message });
+    }
+

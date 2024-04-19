@@ -43,13 +43,14 @@ export default async function categories(app, options){
 
 })
 
-app.put('/categories/:id', {
+/*app.put('/categories/:id', {
     config: {
         requireAuthentication: true
     }
 }, async (request, reply) => {
     let id =  request.params.id;
     let categories = request.body;
+
     
     await products.updateOne({_id: new app.mongo.ObjectId(id)}, {
         $set: {
@@ -57,19 +58,81 @@ app.put('/categories/:id', {
             name: categories.name,
             products: categories.productsName
         }
-    })});
-    
+    })
 
-app.delete('/categories/:id', {
-    config: {
-        requireAuthentication: true
+   
+     
+});*/
+app.put('/categories/:id', async (request, reply) => {
+    try {
+        const id = request.params.id;
+        const { name, products } = request.body; 
+        
+       
+        const schema = {
+            params: {
+                type: 'object',
+                properties: {
+                    id: { type: 'integer' }
+                },
+                required: ['id']
+            }
+        };
+
+       
+        const category = await categories.findOne({ _id: id });
+        if (!category) {
+            throw new Error('Categoria não encontrada');
+        }
+
+        await categories.updateOne(
+            { _id: id }, 
+            { $set: { name, products } } 
+        );
+
+        
+        return { message: 'Categoria atualizada com sucesso' };
+        
+    } catch (error) {
+        console.error(error);
+        reply.status(400).send({ error: error.message });
     }
-}, async(request, reply)=>{
-    let id = request.params.id
-    await categories.deleteOne({_id: new app.mongo.ObjectId(id)});
-    return reply.code(204).send
-}
-)
+});
+
+app.delete('/categories/:id', async (request, reply) => {
+    try {
+        const id = request.params.id;
+       
+
+       
+        const schema = {
+            params: {
+                type: 'object',
+                properties: {
+                    id: { type: 'integer' }
+                },
+                required: ['id']
+            }
+        };
+
+       
+        const category = await categories.findOne({ _id: id });
+        if (!category) {
+            throw new Error('Categoria não encontrada');
+        }
+
+        await categories.deleteOne(
+            { _id: id }, 
+        );
+
+        
+        return { message: 'Categoria Deletada' };
+        
+    } catch (error) {
+        console.error(error);
+        reply.status(400).send({ error: error.message });
+    }
+});
 
 /*app.get('/categories/:id/products', async (request, reply) => {
     try {
@@ -132,3 +195,5 @@ app.get('/categories/:id/products', async (request, reply) => {
 
 
 }
+
+
