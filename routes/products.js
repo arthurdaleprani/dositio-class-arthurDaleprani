@@ -8,18 +8,8 @@ export default async function products(app, options) {
     const products = app.mongo.db.collection('products');
     const categories = app.mongo.db.collection('categories');
 
-    app.get('/products', 
-        {
-            config: {
-                logMe: true
-            }
-        }, 
-        async (request, reply) => {
-            return await products.find().toArray();
-        }
-    );
 
-    app.post('/products', {
+app.post('/products', {
         schema: {
             body: {
                 type: 'object',
@@ -29,7 +19,7 @@ export default async function products(app, options) {
                     qtd: { type: 'integer' },
                     category: {type: 'string'}
                 },
-                required: ['name', 'qtd', 'category']
+                required: ['id','name', 'qtd', 'category']
             }
         },
         config: {
@@ -42,6 +32,8 @@ export default async function products(app, options) {
 
         return reply.code(201).send();
     });
+//ok
+
 
     app.get('/products/:id', async (request, reply) => {
         let id =  request.params.id;
@@ -49,7 +41,7 @@ export default async function products(app, options) {
         
         return product;
     });
-    
+    //ok
     app.delete('/products/:id', {
         config: {
             requireAuthentication: true
@@ -61,7 +53,7 @@ export default async function products(app, options) {
         
         return reply.code(204).send();;
     });
-
+//ok
     app.put('/products/:id', {
         config: {
             requireAuthentication: true
@@ -80,3 +72,4 @@ export default async function products(app, options) {
         return reply.code(204).send();;
     });
 }
+//ok

@@ -18,6 +18,42 @@ describe('###Tests for Server Configuration', async(t) => {
     });
 });
 
+describe('##Success Requests', async(t) => {
+    test('# POST /products', async(t) => {
+        const app = await build(options);
+
+        t.after(async() => {
+            await app.close();
+        });
+        const response = await app.inject({
+            method: 'POST',
+            url: '/products'
+        });
+
+        equal(response.statusCode, 200);
+    });
+});
+
+
+
+describe('##Success Requests', async(t) => {
+    test('# POST /categories', async(t) => {
+        const app = await build(options);
+
+        t.after(async() => {
+            await app.close();
+        });
+        const response = await app.inject({
+            method: 'POST',
+            url: '/categories'
+        });
+
+        equal(response.statusCode, 200);
+    });
+});
+
+
+
 describe('###Tests for Unauthenticated Routes', async(t) => {
     
     describe('##Success Requests', async(t) => {
@@ -36,11 +72,118 @@ describe('###Tests for Unauthenticated Routes', async(t) => {
         });
     });
 
-    describe('##Bad Requests', async(t) => {
+    describe('###Tests for Authenticated routes', async(t) => {
 
-    });
+        describe('##Bad Requests', async(t) => {
+    
+            describe('##Success Requests', async(t) => {
+                test('# GET /categories', async(t) => {
+                    const app = await build(options);
+        
+                    t.after(async() => {
+                        await app.close();
+                    });
+                    const response = await app.inject({
+                        method: 'GET',
+                        url: '/categories'
+                    });
+        
+                    equal(response.statusCode, 200);
+                });
+            });
+        });
+   
 });
 
 describe('###Tests for Authenticated routes', async(t) => {
 
+    describe('##Bad Requests', async(t) => {
+
+        describe('##Success Requests', async(t) => {
+            test('# DELETE /categories:name', async(t) => {
+                const app = await build(options);
+    
+                t.after(async() => {
+                    await app.close();
+                });
+                const response = await app.inject({
+                    method: 'DELETE',
+                    url: '/categories:name'
+                });
+    
+                equal(response.statusCode, 200);
+            });
+        });
+    });
+
+});
+
+describe('###Tests for Authenticated routes', async(t) => {
+
+    describe('##Bad Requests', async(t) => {
+
+        describe('##Success Requests', async(t) => {
+            test('# DELETE /products/:id', async(t) => {
+                const app = await build(options);
+    
+                t.after(async() => {
+                    await app.close();
+                });
+                const response = await app.inject({
+                    method: 'DELETE',
+                    url: '/products:id'
+                });
+    
+                equal(response.statusCode, 200);
+            });
+        });
+    });
+
+});
+
+describe('###Tests for Authenticated routes', async(t) => {
+
+    describe('##Bad Requests', async(t) => {
+
+        describe('##Success Requests', async(t) => {
+            test('# PUT /categories/:name', async(t) => {
+                const app = await build(options);
+    
+                t.after(async() => {
+                    await app.close();
+                });
+                const response = await app.inject({
+                    method: 'PUT',
+                    url: '/categories:name'
+                });
+    
+                equal(response.statusCode, 200);
+            });
+        });
+    });
+
+});
+
+describe('###Tests for Authenticated routes', async(t) => {
+
+    describe('##Bad Requests', async(t) => {
+
+        describe('##Success Requests', async(t) => {
+            test('# PUT /categories/:id', async(t) => {
+                const app = await build(options);
+    
+                t.after(async() => {
+                    await app.close();
+                });
+                const response = await app.inject({
+                    method: 'PUT',
+                    url: '/products/:id'
+                });
+    
+                equal(response.statusCode, 200);
+            });
+        });
+    });
+
+});
 });

@@ -10,7 +10,7 @@ export default async function categories(app, options){
     const InvalidCategoriesError = createError('InvalidCategoriesError', 'Categoria Inválida.', 400);
    
     
-    app.get('/categories',{
+app.get('/categories',{
     },
     async(request, reply) => {
         request.log.info(categories)
@@ -18,19 +18,20 @@ export default async function categories(app, options){
     }
 
     )
+    //ok
 
-
-    app.post('/categories',{
+app.post('/categories',{
         schema: {
             body:{
                 type: 'object',
                     properties:{
                       id: {type:'integer'},
                       name: {type:'string'},
-                      productsName: {type:'string'}
+                      productsName: {type:'string'},
+                      img_url: {type:'string'}
                     
                 },
-                required: ['name', 'productsName']
+                required: ['name', 'productsName', 'img_url']
             }
         },
         config: {
@@ -42,52 +43,35 @@ export default async function categories(app, options){
         return reply.code(201).send
 
 })
+//ok
 
-/*app.put('/categories/:id', {
-    config: {
-        requireAuthentication: true
-    }
-}, async (request, reply) => {
-    let id =  request.params.id;
-    let categories = request.body;
-
-    
-    await products.updateOne({_id: new app.mongo.ObjectId(id)}, {
-        $set: {
-            id: categories.id,
-            name: categories.name,
-            products: categories.productsName
-        }
-    })
-
-   
-     
-});*/
-app.put('/categories/:id', async (request, reply) => {
+app.put('/categories/:name', async (request, reply) => {
     try {
-        const id = request.params.id;
-        const { name, products } = request.body; 
+        const nameCategory = request.params.name;
+        const { name, products, img_url } = request.body; 
         
        
         const schema = {
             params: {
                 type: 'object',
                 properties: {
-                    id: { type: 'integer' }
+                    nameCategory: { type: 'string' }
                 },
-                required: ['id']
+                required: ['nameCategory']
             }
+            
         };
-
+         
        
-        const category = await categories.findOne({ _id: id });
+       
+        const category = await categories.findOne({ nameCategory: nameCategory });
         if (!category) {
             throw new Error('Categoria não encontrada');
         }
 
         await categories.updateOne(
-            { _id: id }, 
-            { $set: { name, products } } 
+            { nameCategory: nameCategory }, 
+            { $set: { name, products, img_url } } 
         );
 
         
@@ -98,10 +82,12 @@ app.put('/categories/:id', async (request, reply) => {
         reply.status(400).send({ error: error.message });
     }
 });
+//ok
 
-app.delete('/categories/:id', async (request, reply) => {
+
+app.delete('/categories/:name', async (request, reply) => {
     try {
-        const id = request.params.id;
+        const name = request.params.name;
        
 
        
@@ -109,20 +95,21 @@ app.delete('/categories/:id', async (request, reply) => {
             params: {
                 type: 'object',
                 properties: {
-                    id: { type: 'integer' }
+                    name: { type: 'string' }
                 },
-                required: ['id']
+                required: ['name']
             }
         };
 
        
-        const category = await categories.findOne({ _id: id });
+       
+        const category = await categories.findOne({ name: name });
         if (!category) {
             throw new Error('Categoria não encontrada');
         }
 
         await categories.deleteOne(
-            { _id: id }, 
+            { name: name }, 
         );
 
         
@@ -133,67 +120,33 @@ app.delete('/categories/:id', async (request, reply) => {
         reply.status(400).send({ error: error.message });
     }
 });
+//ok
 
-/*app.get('/categories/:id/products', async (request, reply) => {
-    try {
-        let id = request.params.id
-
-        let schema = {
-            body: {
-                type: 'object',
-                properties: {
-                    id: { type: 'integer' },
-                    name: { type: 'string' },
-                    productsName: { type: 'string' }
-                },
-                required: ['id', 'name', 'productsName']
-            }
-        };
-
-        await request.validate({ params: schema });
-
-        return categories.id.find().toArray();
-        
-    } catch (error) {
-        console.error(error);
-        reply.status(400).send({ error: error.message });
-    }
-});*/
 app.get('/categories/:id/products', async (request, reply) => {
     try {
-        let id = request.params.id;
+        const id = request.params.id;
 
-        let schema = {
-            params: {
-                type: 'object',
-                properties: {
-                    id: { type: 'integer' }
-                },
-                required: ['id']
-            }
-        };
+        const category = await categories.findOne({ name: id });
 
-        
-
-        let category = await categories.findOne({ _id: id });
         if (!category) {
             throw new Error('Categoria não encontrada');
         }
-        let categoryName = category.name;
 
-        let productsCategory = await products.find({ category: categoryName }).toArray();
-        if(!productsCategory.params){
-            throw new error(204);
+        const productsCategory = await products.find({ category: category.name }).toArray();
+
+        if (productsCategory.length === 0) {
+            return reply.status(204).send();
         }
-        return productsCategory
+
+        return productsCategory;
         
     } catch (error) {
         console.error(error);
         reply.status(400).send({ error: error.message });
     }
 });
-
-
 }
+
+
 
 
